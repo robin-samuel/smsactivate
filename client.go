@@ -66,11 +66,15 @@ func (c *Client) GetNumber(service Service, country Country, maxPrice ...float64
 	}
 
 	var data NumberData
-	if err := json.Unmarshal(body, &data); err == nil {
-		return strconv.Itoa(data.ActivationID), data.PhoneNumber, nil
+	if err := json.Unmarshal(body, &data); err != nil {
+		return "", "", err
 	}
 
-	return "", "", fmt.Errorf("smsactivate: %s", body)
+	if data.Error != nil {
+		return "", "", fmt.Errorf("smsactivate: %s", data.Error.Msg)
+	}
+
+	return data.ActivationID, data.PhoneNumber, nil
 }
 
 func (c *Client) Wait(ctx context.Context, id string) (string, error) {
