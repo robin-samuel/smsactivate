@@ -67,6 +67,10 @@ func (c *Client) GetNumber(service Service, country Country, maxPrice ...float64
 
 	var data NumberData
 	if err := json.Unmarshal(body, &data); err != nil {
+		parts := strings.Split(string(body), ":")
+		if len(parts) == 1 {
+			return "", "", fmt.Errorf("smsactivate: %s", body)
+		}
 		return "", "", err
 	}
 
