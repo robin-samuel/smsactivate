@@ -121,11 +121,11 @@ func (c *Client) Wait(ctx context.Context, id int) (string, error) {
 	}
 }
 
-func (c *Client) Done(id string) error {
+func (c *Client) Done(id int) error {
 	params := url.Values{
 		"api_key": {c.apiKey},
 		"action":  {"setStatus"},
-		"id":      {id},
+		"id":      {strconv.Itoa(id)},
 		"status":  {"6"},
 	}
 	res, err := c.Get("https://api.sms-activate.io/stubs/handler_api.php?" + params.Encode())
@@ -147,11 +147,11 @@ func (c *Client) Done(id string) error {
 	}
 }
 
-func (c *Client) Cancel(id string) error {
+func (c *Client) Cancel(id int) error {
 	params := url.Values{
 		"api_key": {c.apiKey},
 		"action":  {"setStatus"},
-		"id":      {id},
+		"id":      {strconv.Itoa(id)},
 		"status":  {"8"},
 	}
 	res, err := c.Get("https://api.sms-activate.io/stubs/handler_api.php?" + params.Encode())
