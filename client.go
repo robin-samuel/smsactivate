@@ -44,7 +44,7 @@ func (c *Client) Balance() (float64, error) {
 	return strconv.ParseFloat(strings.TrimPrefix(string(body), "ACCESS_BALANCE:"), 64)
 }
 
-func (c *Client) GetNumber(service Service, country Country, maxPrice ...float64) (string, string, error) {
+func (c *Client) GetNumber(service Service, country Country, maxPrice ...float64) (int, string, error) {
 	params := url.Values{
 		"api_key": {c.apiKey},
 		"action":  {"getNumberV2"},
@@ -56,32 +56,32 @@ func (c *Client) GetNumber(service Service, country Country, maxPrice ...float64
 	}
 	res, err := c.Get("https://api.sms-activate.io/stubs/handler_api.php?" + params.Encode())
 	if err != nil {
-		return "", "", err
+		return 0, "", err
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return "", "", err
+		return 0, "", err
 	}
 
 	var data NumberData
 	if err := json.Unmarshal(body, &data); err != nil {
 		parts := strings.Split(string(body), ":")
 		if len(parts) == 1 {
-			return "", "", fmt.Errorf("smsactivate: %s", body)
+			return 0, "", fmt.Errorf("smsactivate: %s", body)
 		}
-		return "", "", err
+		return 0, "", err
 	}
 
 	if data.Error != nil {
-		return "", "", fmt.Errorf("smsactivate: %s", data.Error.Msg)
+		return 0, "", fmt.Errorf("smsactivate: %s", data.Error.Msg)
 	}
 
 	return data.ActivationID, data.PhoneNumber, nil
 }
 
-func (c *Client) Wait(ctx context.Context, id string) (string, error) {
+func (c *Client) Wait(ctx context.Context, id int) (string, error) {
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
@@ -93,7 +93,7 @@ func (c *Client) Wait(ctx context.Context, id string) (string, error) {
 			params := url.Values{
 				"api_key": {c.apiKey},
 				"action":  {"getStatus"},
-				"id":      {id},
+				"id":      {strconv.Itoa(id)},
 			}
 			res, err := c.Get("https://api.sms-activate.io/stubs/handler_api.php?" + params.Encode())
 			if err != nil {

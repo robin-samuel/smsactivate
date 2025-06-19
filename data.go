@@ -1,15 +1,14 @@
 package smsactivate
 
 type NumberData struct {
-	Status             string `json:"status"`
-	ActivationID       string `json:"activationId"`
-	PhoneNumber        string `json:"phoneNumber"`
-	ActivationCost     string `json:"activationCost"`
-	CountryCode        string `json:"countryCode"`
-	CanGetAnotherSms   bool   `json:"canGetAnotherSms"`
-	ActivationTime     string `json:"activationTime"`
-	ActivationEndTime  string `json:"activationEndTime"`
-	ActivationOperator string `json:"activationOperator"`
+	ActivationID       int     `json:"activationId"`
+	PhoneNumber        string  `json:"phoneNumber"`
+	ActivationCost     float64 `json:"activationCost"`
+	Currency           int     `json:"currency"`
+	CountryCode        string  `json:"countryCode"`
+	CanGetAnotherSms   string  `json:"canGetAnotherSms"`
+	ActivationTime     string  `json:"activationTime"`
+	ActivationOperator string  `json:"activationOperator"`
 	*Error
 }
 
